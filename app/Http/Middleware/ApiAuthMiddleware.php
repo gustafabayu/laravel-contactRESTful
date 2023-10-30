@@ -17,7 +17,8 @@ class ApiAuthMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->header('Authorization');
+        // $token = $request->header('Authorization'); //place token as a headers tab
+        $token = $request->bearerToken(); //place token as a authorization tab
         $authenticate = true;
 
         if (!$token) {
@@ -29,6 +30,16 @@ class ApiAuthMiddleware
             $authenticate = false;
         } else {
             Auth::login($user);
+        }
+
+        if ($user->token_expires_at < now()) {
+            return response()->json([
+                "errors" => [
+                    "message" => [
+                        "token expired"
+                    ]
+                ]
+            ])->setStatusCode(401);
         }
 
         if ($authenticate) {

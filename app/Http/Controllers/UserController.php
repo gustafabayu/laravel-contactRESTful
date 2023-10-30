@@ -51,7 +51,8 @@ class UserController extends Controller
         }
 
         $user->token = Str::uuid()->toString();
-        $user->save;
+        $user->token_expires_at = now()->addMinutes(10);
+        $user->save();
         return new UserResource($user);
     }
 
