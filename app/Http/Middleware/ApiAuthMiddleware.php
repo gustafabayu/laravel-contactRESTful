@@ -32,7 +32,7 @@ class ApiAuthMiddleware
             Auth::login($user);
         }
 
-        if ($user->token_expires_at < now()) {
+        if ($user && $user->token_expires_at < now() && $user->token) {
             return response()->json([
                 "errors" => [
                     "message" => [
